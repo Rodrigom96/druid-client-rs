@@ -1,5 +1,6 @@
 use super::definitions::Filter;
 use super::definitions::Granularity;
+use super::definitions::VirtualColumn;
 use super::group_by::PostAggregation;
 use super::DataSource;
 use crate::query::definitions::Aggregation;
@@ -16,6 +17,7 @@ pub struct Timeseries {
     pub filter: Option<Filter>,
     pub aggregations: Vec<Aggregation>,
     pub post_aggregations: Vec<PostAggregation>,
+    pub virtual_columns: Vec<VirtualColumn>,
     pub limit: Option<usize>,
     pub context: std::collections::HashMap<String, String>,
 }

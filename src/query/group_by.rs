@@ -1,6 +1,7 @@
 use super::definitions::Dimension;
 use super::definitions::Filter;
 use super::definitions::Granularity;
+use super::definitions::VirtualColumn;
 use super::DataSource;
 use super::{definitions::Ordering, JsonAny, JsonNumber};
 use crate::query::definitions::Aggregation;
@@ -19,6 +20,7 @@ pub struct GroupBy {
     pub filter: Option<Filter>,
     pub aggregations: Vec<Aggregation>,
     pub post_aggregations: Vec<PostAggregation>,
+    pub virtual_columns: Vec<VirtualColumn>,
     pub intervals: Vec<String>,
     pub subtotal_spec: Vec<Vec<String>>,
     pub context: std::collections::HashMap<String, String>,
@@ -177,6 +179,7 @@ pub struct GroupByBuilder {
     filter: Option<Filter>,
     aggregations: Vec<Aggregation>,
     post_aggregations: Vec<PostAggregation>,
+    virtual_columns: Vec<VirtualColumn>,
     intervals: Vec<String>,
     subtotal_spec: Vec<Vec<String>>,
     context: std::collections::HashMap<String, String>,
@@ -193,6 +196,7 @@ impl GroupByBuilder {
             filter: None,
             aggregations: vec![],
             post_aggregations: vec![],
+            virtual_columns: vec![],
             intervals: vec![],
             subtotal_spec: vec![],
             context: std::collections::HashMap::new(),
@@ -226,6 +230,10 @@ impl GroupByBuilder {
         self.post_aggregations = aggr;
         self
     }
+    pub fn virtual_columns(mut self, columns: Vec<VirtualColumn>) -> Self {
+        self.virtual_columns = columns;
+        self
+    }
     pub fn intervals(mut self, intervals: Vec<&str>) -> Self {
         self.intervals = intervals.iter().map(|s| s.to_string()).collect();
         self
@@ -253,6 +261,7 @@ impl GroupByBuilder {
             filter: self.filter,
             aggregations: self.aggregations,
             post_aggregations: self.post_aggregations,
+            virtual_columns: self.virtual_columns,
             intervals: self.intervals,
             subtotal_spec: self.subtotal_spec,
             context: self.context,

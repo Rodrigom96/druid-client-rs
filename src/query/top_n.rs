@@ -1,6 +1,7 @@
 use super::definitions::Aggregation;
 use super::definitions::Dimension;
 use super::definitions::Granularity;
+use super::definitions::VirtualColumn;
 use super::DataSource;
 use serde::{Deserialize, Serialize};
 
@@ -14,6 +15,7 @@ pub struct TopN {
     pub threshold: usize,
     pub metric: String,
     pub aggregations: Vec<Aggregation>,
+    pub virtual_columns: Vec<VirtualColumn>,
     pub intervals: Vec<String>,
     pub granularity: Granularity,
     pub context: std::collections::HashMap<String, String>,
