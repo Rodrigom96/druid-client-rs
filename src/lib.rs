@@ -48,7 +48,7 @@
 //! use druid_io::{
 //!     query::timeseries::Timeseries,
 //!     query::{
-//!         definitions::Aggregation,
+//!         definitions::{Aggregation, VirtualColumn},
 //!         definitions::{Dimension, Filter, Granularity, Ordering, OutputType, SortingOrder},
 //!         group_by::{
 //!             PostAggregation, PostAggregator,
@@ -62,6 +62,7 @@
 //!     count: usize,
 //!     count_fraction: f32,
 //!     user: String,
+//!     foo_user: String,
 //! }
 //!
 //! let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
@@ -79,6 +80,11 @@
 //!             field_name: "user".into(),
 //!             max_string_bytes: 1024,
 //!         },
+//!         Aggregation::StringFirst {
+//!             name: "foo_user".into(),
+//!             field_name: "foo_user".into(),
+//!             max_string_bytes: 1024,
+//!         },
 //!     ],
 //!     post_aggregations: vec![PostAggregation::Arithmetic {
 //!         name: "count_fraction".into(),
@@ -88,6 +94,11 @@
 //!             PostAggregator::constant("hundred", 100.into()),
 //!         ],
 //!         ordering: None,
+//!     }],
+//!     virtual_columns: vec![VirtualColumn::Expression {
+//!        name: "foo_user".into(),
+//!        expression: "concat('foo' + user)".into(),
+//!        output_type: OutputType::STRING ,
 //!     }],
 //!     intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
 //!     context: Default::default(),

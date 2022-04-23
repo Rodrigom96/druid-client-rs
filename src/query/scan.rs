@@ -1,5 +1,6 @@
 use super::definitions::Filter;
 use super::definitions::Ordering;
+use super::definitions::VirtualColumn;
 use super::DataSource;
 use serde::{Deserialize, Serialize};
 
@@ -12,6 +13,7 @@ pub struct Scan {
     pub result_format: ResultFormat,
     pub filter: Option<Filter>,
     pub columns: Vec<String>,
+    pub virtual_columns: Vec<VirtualColumn>,
     pub batch_size: usize,
     pub limit: Option<usize>,
     pub ordering: Option<Ordering>,

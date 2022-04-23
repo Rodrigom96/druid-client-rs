@@ -7,7 +7,7 @@ use druid_io::{
     query::timeseries::Timeseries,
     query::top_n::TopN,
     query::{
-        definitions::Aggregation,
+        definitions::{Aggregation, VirtualColumn},
         definitions::{Dimension, Filter, Granularity, Ordering, OutputType, SortingOrder},
         group_by::{
             GroupBy, GroupByBuilder, HavingSpec, LimitSpec, OrderByColumnSpec, PostAggregation,
@@ -26,6 +26,7 @@ use std::collections::HashMap;
 #[derive(Serialize, Deserialize, Debug)]
 struct WikiPage {
     page: String,
+    foo_page: String,
     user: Option<String>,
     count: usize,
 }
@@ -46,7 +47,17 @@ fn test_top_n_query() {
                 field_name: "user".into(),
                 max_string_bytes: 1024,
             },
+            Aggregation::StringFirst {
+                name: "foo_page".into(),
+                field_name: "foo_page".into(),
+                max_string_bytes: 1024,
+            },
         ],
+        virtual_columns: vec![VirtualColumn::Expression {
+            name: "foo_page".into(),
+            expression: "concat('foo' + page)".into(),
+            output_type: OutputType::STRING ,
+        }],
         intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
         granularity: Granularity::All,
         context: context,
@@ -65,6 +76,7 @@ struct ScanEvent {
     comment: Option<String>,
     namespace: Option<String>,
     page: Option<String>,
+    foo_page: Option<String>,
     region_iso_code: Option<String>,
     user: String,
 
@@ -87,6 +99,7 @@ fn test_scan_join() {
                         ],
                         result_format: ResultFormat::List,
                         columns: vec!["Name".into(), "languages".into()],
+                        virtual_columns: vec![],
                         limit: None,
                         filter: None,
                         ordering: Some(Ordering::None),
@@ -103,6 +116,11 @@ fn test_scan_join() {
         intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
         result_format: ResultFormat::List,
         columns: vec![],
+        virtual_columns: vec![VirtualColumn::Expression {
+            name: "foo_page".into(),
+            expression: "concat('foo' + page)".into(),
+            output_type: OutputType::STRING ,
+        }],
         limit: Some(10),
         filter: None,
         ordering: Some(Ordering::None),
@@ -117,11 +135,18 @@ fn test_scan_join() {
 fn test_group_by() {
     let group_by = GroupBy {
         data_source: DataSource::table("wikipedia"),
-        dimensions: vec![Dimension::Default {
-            dimension: "page".into(),
-            output_name: "page".into(),
-            output_type: OutputType::STRING,
-        }],
+        dimensions: vec![
+            Dimension::Default {
+                dimension: "page".into(),
+                output_name: "page".into(),
+                output_type: OutputType::STRING,
+            },
+            Dimension::Default {
+                dimension: "foo_page".into(),
+                output_name: "foo_page".into(),
+                output_type: OutputType::STRING,
+            },
+        ],
         limit_spec: Some(LimitSpec {
             limit: 10,
             columns: vec![OrderByColumnSpec::new(
@@ -149,6 +174,11 @@ fn test_group_by() {
             ],
             ordering: None,
         }],
+        virtual_columns: vec![VirtualColumn::Expression {
+            name: "foo_page".into(),
+            expression: "concat('foo' + page)".into(),
+            output_type: OutputType::STRING ,
+        }],
         having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
         intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
         subtotal_spec: Default::default(),
@@ -164,6 +194,7 @@ pub struct TimeAggr {
     count: usize,
     count_ololo: f32,
     user: String,
+    foo_user: String,
 }
 #[test]
 fn test_timeseries() {
@@ -183,6 +214,11 @@ fn test_timeseries() {
                 field_name: "user".into(),
                 max_string_bytes: 1024,
             },
+            Aggregation::StringFirst {
+                name: "foo_user".into(),
+                field_name: "foo_user".into(),
+                max_string_bytes: 1024,
+            },
         ],
         post_aggregations: vec![PostAggregation::Arithmetic {
             name: "count_ololo".into(),
@@ -192,6 +228,11 @@ fn test_timeseries() {
                 PostAggregator::constant("hundred", 100.into()),
             ],
             ordering: None,
+        }],
+        virtual_columns: vec![VirtualColumn::Expression {
+            name: "foo_user".into(),
+            expression: "concat('foo' + user)".into(),
+            output_type: OutputType::STRING ,
         }],
         intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
         context: context,
@@ -207,15 +248,23 @@ pub struct Page {
     count_ololo: f32,
     title: String,
     user: String,
+    foo_page: String,
 }
 #[test]
 fn test_group_by_builder() {
     let group_by = GroupByBuilder::new(DataSource::table("wikipedia"))
-        .dimensions(vec![Dimension::Default {
-            dimension: "page".into(),
-            output_name: "title".into(),
-            output_type: OutputType::STRING,
-        }])
+        .dimensions(vec![
+            Dimension::Default {
+                dimension: "page".into(),
+                output_name: "title".into(),
+                output_type: OutputType::STRING,
+            },
+            Dimension::Default {
+                dimension: "foo_page".into(),
+                output_name: "foo_page".into(),
+                output_type: OutputType::STRING,
+            },
+        ])
         .limit(LimitSpec {
             limit: 10,
             columns: vec![OrderByColumnSpec::new(
@@ -242,6 +291,11 @@ fn test_group_by_builder() {
                 PostAggregator::constant("hundred", 100.into()),
             ],
             ordering: None,
+        }])
+        .virtual_columns(vec![VirtualColumn::Expression {
+            name: "foo_page".into(),
+            expression: "concat('foo' + page)".into(),
+            output_type: OutputType::STRING,
         }])
         .intervals(vec![
             "-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into(),
