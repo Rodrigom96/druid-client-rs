@@ -1,5 +1,6 @@
 use super::definitions::Filter;
 use super::definitions::Granularity;
+use super::definitions::Interval;
 use super::definitions::SortingOrder;
 use super::DataSource;
 use serde::{Deserialize, Serialize};
@@ -12,7 +13,7 @@ pub struct Search {
     pub granularity: Granularity,
     pub filter: Option<Filter>,
     pub limit: usize,
-    pub intervals: Vec<String>,
+    pub intervals: Vec<Interval>,
     pub search_dimensions: Vec<String>,
     pub query: SearchQuerySpec,
     pub sort: Option<SortingOrder>,

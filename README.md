@@ -81,7 +81,10 @@ let timeseries = Timeseries {
         ordering: None,
     }],
     virtual_columns: vec![],
-    intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+    intervals: vec![Interval{
+        from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+        to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+    }],
     context: context,
 };
 let result = tokio_test::block_on(druid_client.timeseries::<TimeAggr>(&timeseries));
@@ -113,7 +116,10 @@ let top_n = TopN {
         },
     ],
     virtual_columns: vec![],
-    intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+    intervals: vec![Interval{
+        from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+        to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+    }],
     granularity: Granularity::All,
     context: Default::default(),
 };
@@ -163,7 +169,10 @@ let group_by = GroupBy {
     }],
     virtual_columns: vec![],
     having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
-    intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+    intervals: vec![Interval{
+        from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+        to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+    }],
     subtotal_spec: Default::default(),
     context: Default::default(),
 };
@@ -199,10 +208,10 @@ let scan = Scan {
                 Scan {
                     data_source: DataSource::table("countries"),
                     batch_size: 10,
-                    intervals: vec![
-                        "-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z"
-                            .into(),
-                    ],
+                    intervals: vec![Interval{
+                        from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+                        to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+                    }],
                     result_format: ResultFormat::List,
                     columns: vec!["Name".into(), "languages".into()],
                     limit: None,
@@ -218,7 +227,10 @@ let scan = Scan {
         .build()
         .unwrap(),
     batch_size: 10,
-    intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+    intervals: vec![Interval{
+        from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+        to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+    }],
     result_format: ResultFormat::List,
     columns: vec![],
     virtual_columns: vec![],
