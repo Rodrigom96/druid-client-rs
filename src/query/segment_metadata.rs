@@ -1,3 +1,4 @@
+use super::definitions::Interval;
 use crate::query::DataSource;
 use serde::{Deserialize, Serialize};
 
@@ -6,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct SegmentMetadata {
     pub data_source: DataSource,
-    pub intervals: Vec<String>,
+    pub intervals: Vec<Interval>,
     pub to_include: ToInclude,
     pub merge: bool,
     #[serde(skip_serializing_if = "Vec::is_empty")]

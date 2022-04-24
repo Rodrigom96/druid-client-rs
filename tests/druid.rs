@@ -1,6 +1,7 @@
 extern crate druid_io;
 extern crate tokio;
 
+use chrono::NaiveDate;
 use druid_io::{
     client::DruidClient,
     query::search::Search,
@@ -8,7 +9,9 @@ use druid_io::{
     query::top_n::TopN,
     query::{
         definitions::{Aggregation, VirtualColumn},
-        definitions::{Dimension, Filter, Granularity, Ordering, OutputType, SortingOrder},
+        definitions::{
+            Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder
+        },
         group_by::{
             GroupBy, GroupByBuilder, HavingSpec, LimitSpec, OrderByColumnSpec, PostAggregation,
             PostAggregator,
@@ -58,7 +61,10 @@ fn test_top_n_query() {
             expression: "concat('foo' + page)".into(),
             output_type: OutputType::STRING ,
         }],
-        intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+        intervals: vec![Interval{
+            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        }],
         granularity: Granularity::All,
         context: context,
     };
@@ -94,9 +100,10 @@ fn test_scan_join() {
                     Scan {
                         data_source: DataSource::table("countries"),
                         batch_size: 10,
-                        intervals: vec![
-                            "-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into(),
-                        ],
+                        intervals: vec![Interval{
+                            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+                            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+                        }],
                         result_format: ResultFormat::List,
                         columns: vec!["Name".into(), "languages".into()],
                         virtual_columns: vec![],
@@ -113,7 +120,10 @@ fn test_scan_join() {
             .build()
             .unwrap(),
         batch_size: 10,
-        intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+        intervals: vec![Interval{
+            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        }],
         result_format: ResultFormat::List,
         columns: vec![],
         virtual_columns: vec![VirtualColumn::Expression {
@@ -180,7 +190,10 @@ fn test_group_by() {
             output_type: OutputType::STRING ,
         }],
         having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
-        intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+        intervals: vec![Interval{
+            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        }],
         subtotal_spec: Default::default(),
         context: Default::default(),
     };
@@ -234,7 +247,10 @@ fn test_timeseries() {
             expression: "concat('foo' + user)".into(),
             output_type: OutputType::STRING ,
         }],
-        intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+        intervals: vec![Interval{
+            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        }],
         context: context,
     };
     let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
@@ -297,9 +313,10 @@ fn test_group_by_builder() {
             expression: "concat('foo' + page)".into(),
             output_type: OutputType::STRING,
         }])
-        .intervals(vec![
-            "-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into(),
-        ])
+        .intervals(vec![Interval{
+            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        }])
         .add_context("groupByStrategy", "v2")
         // .add_context("resultAsArray", "true")
         .build();
@@ -317,7 +334,10 @@ fn test_search() {
         sort: None,
         filter: None,
         limit: 20,
-        intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+        intervals: vec![Interval{
+            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        }],
         context: Default::default(),
         granularity: Granularity::All,
     };
@@ -348,7 +368,10 @@ fn test_data_source_metadata() {
 fn test_segment_metadata() {
     let segment_query = SegmentMetadata {
         data_source: DataSource::table("countries"),
-        intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+        intervals: vec![Interval{
+            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        }],
         to_include: ToInclude::All,
         merge: false,
         analysis_types: vec![

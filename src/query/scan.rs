@@ -1,4 +1,5 @@
 use super::definitions::Filter;
+use super::definitions::Interval;
 use super::definitions::Ordering;
 use super::definitions::VirtualColumn;
 use super::DataSource;
@@ -9,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct Scan {
     pub data_source: DataSource,
-    pub intervals: Vec<String>,
+    pub intervals: Vec<Interval>,
     pub result_format: ResultFormat,
     pub filter: Option<Filter>,
     pub columns: Vec<String>,

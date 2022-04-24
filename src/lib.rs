@@ -42,6 +42,7 @@
 //! See [Timeseries query documentation](https://druid.apache.org/docs/latest/querying/timeseriesquery.html)
 //!
 //! ```rust
+//! use chrono::NaiveDate;
 //! use druid_io::client::DruidClient;
 //! use serde::Deserialize;
 //! use serde::Serialize;
@@ -49,14 +50,16 @@
 //!     query::timeseries::Timeseries,
 //!     query::{
 //!         definitions::{Aggregation, VirtualColumn},
-//!         definitions::{Dimension, Filter, Granularity, Ordering, OutputType, SortingOrder},
+//!         definitions::{
+//!             Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder
+//!         },
 //!         group_by::{
 //!             PostAggregation, PostAggregator,
 //!         },
 //!         DataSource
 //!     },
 //! };
-//! 
+//!
 //! #[derive(Serialize, Deserialize, Debug)]
 //! pub struct TimeAggr {
 //!     count: usize,
@@ -100,7 +103,10 @@
 //!        expression: "concat('foo' + user)".into(),
 //!        output_type: OutputType::STRING ,
 //!     }],
-//!     intervals: vec!["-146136543-09-08T08:23:32.096Z/146140482-04-24T15:36:27.903Z".into()],
+//!     intervals: vec![Interval{
+//!         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
+//!         to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+//!    }],
 //!     context: Default::default(),
 //! };
 //! let result = druid_client.timeseries::<TimeAggr>(&timeseries);

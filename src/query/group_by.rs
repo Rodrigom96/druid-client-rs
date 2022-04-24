@@ -1,6 +1,7 @@
 use super::definitions::Dimension;
 use super::definitions::Filter;
 use super::definitions::Granularity;
+use super::definitions::Interval;
 use super::definitions::VirtualColumn;
 use super::DataSource;
 use super::{definitions::Ordering, JsonAny, JsonNumber};
@@ -21,7 +22,7 @@ pub struct GroupBy {
     pub aggregations: Vec<Aggregation>,
     pub post_aggregations: Vec<PostAggregation>,
     pub virtual_columns: Vec<VirtualColumn>,
-    pub intervals: Vec<String>,
+    pub intervals: Vec<Interval>,
     pub subtotal_spec: Vec<Vec<String>>,
     pub context: std::collections::HashMap<String, String>,
 }
@@ -180,7 +181,7 @@ pub struct GroupByBuilder {
     aggregations: Vec<Aggregation>,
     post_aggregations: Vec<PostAggregation>,
     virtual_columns: Vec<VirtualColumn>,
-    intervals: Vec<String>,
+    intervals: Vec<Interval>,
     subtotal_spec: Vec<Vec<String>>,
     context: std::collections::HashMap<String, String>,
 }
@@ -234,8 +235,8 @@ impl GroupByBuilder {
         self.virtual_columns = columns;
         self
     }
-    pub fn intervals(mut self, intervals: Vec<&str>) -> Self {
-        self.intervals = intervals.iter().map(|s| s.to_string()).collect();
+    pub fn intervals(mut self, intervals: Vec<Interval>) -> Self {
+        self.intervals = intervals;
         self
     }
     pub fn subtotal_spec(mut self, subtotals: Vec<Vec<String>>) -> Self {

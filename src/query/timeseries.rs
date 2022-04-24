@@ -1,5 +1,6 @@
 use super::definitions::Filter;
 use super::definitions::Granularity;
+use super::definitions::Interval;
 use super::definitions::VirtualColumn;
 use super::group_by::PostAggregation;
 use super::DataSource;
@@ -13,7 +14,7 @@ pub struct Timeseries {
     pub data_source: DataSource,
     pub granularity: Granularity,
     pub descending: bool,
-    pub intervals: Vec<String>,
+    pub intervals: Vec<Interval>,
     pub filter: Option<Filter>,
     pub aggregations: Vec<Aggregation>,
     pub post_aggregations: Vec<PostAggregation>,
