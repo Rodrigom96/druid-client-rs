@@ -37,8 +37,8 @@ pub struct DimValue {
 
 pub type SearchResponse = DruidListResponse<DimValue>;
 
-#[serde(rename_all = "camelCase")]
 #[derive(Deserialize, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct ScanResponse<T: DeserializeOwned> {
     segment_id: String,
     columns: Vec<String>,

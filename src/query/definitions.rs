@@ -314,8 +314,8 @@ pub enum ExtractFN {
     Bucket { size: usize, offset: usize },
 }
 
-#[serde(rename_all = "camelCase")]
 #[derive(Deserialize, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub enum NullHandling {
     NullString,
     EmptyString,

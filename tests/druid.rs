@@ -10,7 +10,7 @@ use druid_io::{
     query::{
         definitions::{Aggregation, VirtualColumn},
         definitions::{
-            Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder
+            Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder,
         },
         group_by::{
             GroupBy, GroupByBuilder, HavingSpec, LimitSpec, OrderByColumnSpec, PostAggregation,
@@ -59,16 +59,16 @@ fn test_top_n_query() {
         virtual_columns: vec![VirtualColumn::Expression {
             name: "foo_page".into(),
             expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING ,
+            output_type: OutputType::STRING,
         }],
-        intervals: vec![Interval{
-            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        intervals: vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
         granularity: Granularity::All,
         context: context,
     };
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.top_n::<WikiPage>(&top_n));
     println!("{:?}", result.unwrap());
 }
@@ -100,9 +100,9 @@ fn test_scan_join() {
                     Scan {
                         data_source: DataSource::table("countries"),
                         batch_size: 10,
-                        intervals: vec![Interval{
-                            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-                            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+                        intervals: vec![Interval {
+                            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+                            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
                         }],
                         result_format: ResultFormat::List,
                         columns: vec!["Name".into(), "languages".into()],
@@ -120,16 +120,16 @@ fn test_scan_join() {
             .build()
             .unwrap(),
         batch_size: 10,
-        intervals: vec![Interval{
-            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        intervals: vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
         result_format: ResultFormat::List,
         columns: vec![],
         virtual_columns: vec![VirtualColumn::Expression {
             name: "foo_page".into(),
             expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING ,
+            output_type: OutputType::STRING,
         }],
         limit: Some(10),
         filter: None,
@@ -137,7 +137,7 @@ fn test_scan_join() {
         context: std::collections::HashMap::new(),
     };
 
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.scan::<ScanEvent>(&scan));
     println!("{:?}", result.unwrap());
 }
@@ -187,17 +187,17 @@ fn test_group_by() {
         virtual_columns: vec![VirtualColumn::Expression {
             name: "foo_page".into(),
             expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING ,
+            output_type: OutputType::STRING,
         }],
         having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
-        intervals: vec![Interval{
-            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        intervals: vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
         subtotal_spec: Default::default(),
         context: Default::default(),
     };
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.group_by::<WikiPage>(&group_by));
     println!("{:?}", result.unwrap());
 }
@@ -245,15 +245,15 @@ fn test_timeseries() {
         virtual_columns: vec![VirtualColumn::Expression {
             name: "foo_user".into(),
             expression: "concat('foo' + user)".into(),
-            output_type: OutputType::STRING ,
+            output_type: OutputType::STRING,
         }],
-        intervals: vec![Interval{
-            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        intervals: vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
         context: context,
     };
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.timeseries::<TimeAggr>(&timeseries));
     println!("{:?}", result.unwrap());
 }
@@ -313,14 +313,14 @@ fn test_group_by_builder() {
             expression: "concat('foo' + page)".into(),
             output_type: OutputType::STRING,
         }])
-        .intervals(vec![Interval{
-            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        .intervals(vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }])
         .add_context("groupByStrategy", "v2")
         // .add_context("resultAsArray", "true")
         .build();
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.group_by::<Page>(&group_by));
     println!("{:?}", result.unwrap());
 }
@@ -334,14 +334,14 @@ fn test_search() {
         sort: None,
         filter: None,
         limit: 20,
-        intervals: vec![Interval{
-            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        intervals: vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
         context: Default::default(),
         granularity: Granularity::All,
     };
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.search::<WikiPage>(&search));
     println!("{:?}", result.unwrap());
 }
@@ -353,13 +353,13 @@ fn test_time_boundary() {
         context: Default::default(),
         bound: TimeBoundType::MinMaxTime,
     };
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.time_boundary::<WikiPage>(&top_n));
     println!("{:?}", result.unwrap());
 }
 #[test]
 fn test_data_source_metadata() {
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result =
         tokio_test::block_on(druid_client.datasource_metadata(DataSource::table("wikipedia")));
     println!("{:?}", result.unwrap());
@@ -368,9 +368,9 @@ fn test_data_source_metadata() {
 fn test_segment_metadata() {
     let segment_query = SegmentMetadata {
         data_source: DataSource::table("countries"),
-        intervals: vec![Interval{
-            from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-            to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
+        intervals: vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
         to_include: ToInclude::All,
         merge: false,
@@ -387,7 +387,7 @@ fn test_segment_metadata() {
         lenient_aggregator_merge: false,
     };
 
-    let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.segment_metadata(&segment_query));
     println!("{:?}", result.unwrap());
 }

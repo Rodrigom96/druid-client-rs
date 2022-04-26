@@ -29,18 +29,11 @@ druid-io = "*"
 
 ### Client
 
-Connect to a druid cluster throughly staticly provided list of brokers:
+Connect to a druid cluster
 
 ```rust
 
-let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
-```
-
-Connector to Druid cluster through Zookeeper - supports autodiscovery of new brokers and load balancing:
-
-```rust
-
-TODO:
+let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
 ```
 
 ### Querying
