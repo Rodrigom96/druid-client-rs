@@ -32,7 +32,7 @@
 //! ```rust
 //! use druid_io::client::DruidClient;
 //!
-//! let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+//! let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
 //! ```
 //!
 //! ### Querying
@@ -68,7 +68,7 @@
 //!     foo_user: String,
 //! }
 //!
-//! let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+//! let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
 //!
 //! let timeseries = Timeseries {
 //!     data_source: DataSource::table("wikipedia"),
@@ -116,7 +116,6 @@
 extern crate serde_json;
 
 pub mod client;
-pub mod connection;
 pub mod query;
 pub mod serialization;
 

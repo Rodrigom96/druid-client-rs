@@ -1,4 +1,3 @@
-use crate::connection::{BrokersPool, SelectionStategy, StaticPool};
 use crate::query::response::GroupByResponse;
 use crate::query::response::MetadataResponse;
 use crate::query::response::ScanResponse;
@@ -39,27 +38,28 @@ pub enum DruidClientError {
 type ClientResult<T> = Result<T, DruidClientError>;
 
 pub struct DruidClient {
+    url: String,
     http_client: Client,
-    brokers_pool: Box<dyn BrokersPool>,
 }
 
 impl DruidClient {
-    pub fn new(nodes: Vec<String>) -> Self {
-        let strategy = SelectionStategy::default_for(&nodes);
-        DruidClient {
-            http_client: Client::new(),
-            brokers_pool: Box::new(StaticPool::new(nodes, strategy)),
+    pub fn new(url: &str, endpoint: &str) -> Self {
+        let mut url = url.to_string();
+        if !url.ends_with("/") {
+           url.push('/');
         }
-    }
+        url.push_str(endpoint);
 
-    fn url(&self) -> String {
-        format!("http://{}/druid/v2/?pretty", self.brokers_pool.broker())
+        DruidClient {
+            url,
+            http_client: Client::new(),
+        }
     }
 
     async fn http_query(&self, request: &str) -> Result<String, DruidClientError> {
         let response_str = self
             .http_client
-            .post(&self.url())
+            .post(&self.url)
             .body(request.to_string())
             .header(reqwest::header::CONTENT_TYPE, "application/json")
             .send()

@@ -178,8 +178,8 @@ pub struct DataSourceMetadata {
     pub context: std::collections::HashMap<String, String>,
 }
 
-#[serde(untagged)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
 pub enum JsonNumber {
     Float(f32),
     Integer(isize),
