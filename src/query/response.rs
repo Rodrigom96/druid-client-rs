@@ -8,14 +8,14 @@ use std::collections::HashMap;
 #[derive(Deserialize, Serialize, Debug)]
 pub struct DruidListResponse<T: DeserializeOwned> {
     pub timestamp: String,
-    #[serde(bound (deserialize = ""))]
+    #[serde(bound(deserialize = ""))]
     pub result: Vec<T>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct MetadataResponse<T: DeserializeOwned> {
     pub timestamp: String,
-    #[serde(bound (deserialize = ""))]
+    #[serde(bound(deserialize = ""))]
     pub result: T,
 }
 
@@ -24,7 +24,7 @@ pub type TopNResponse<T> = DruidListResponse<T>;
 #[derive(Deserialize, Serialize, Debug)]
 pub struct GroupByResponse<T: DeserializeOwned> {
     pub timestamp: String,
-    #[serde(bound (deserialize = ""))]
+    #[serde(bound(deserialize = ""))]
     pub event: T,
 }
 
@@ -42,7 +42,7 @@ pub type SearchResponse = DruidListResponse<DimValue>;
 pub struct ScanResponse<T: DeserializeOwned> {
     segment_id: String,
     columns: Vec<String>,
-    #[serde(bound (deserialize = ""))]
+    #[serde(bound(deserialize = ""))]
     events: Vec<T>,
 }
 
@@ -110,6 +110,6 @@ pub struct SegmentMetadataResponse {
 #[serde(rename_all = "camelCase")]
 pub struct TimeseriesResponse<T: DeserializeOwned> {
     timestamp: Option<String>,
-    #[serde(bound (deserialize = ""))]
+    #[serde(bound(deserialize = ""))]
     result: T,
 }

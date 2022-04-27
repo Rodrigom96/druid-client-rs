@@ -23,10 +23,6 @@ pub enum TimeBoundType {
 
 impl TimeBoundType {
     pub fn is_both(&self) -> bool {
-        if let TimeBoundType::MinMaxTime = self {
-            true
-        } else {
-            false
-        }
+        matches!(self, TimeBoundType::MinMaxTime)
     }
 }

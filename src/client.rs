@@ -45,8 +45,8 @@ pub struct DruidClient {
 impl DruidClient {
     pub fn new(url: &str, endpoint: &str) -> Self {
         let mut url = url.to_string();
-        if !url.ends_with("/") {
-           url.push('/');
+        if !url.ends_with('/') {
+            url.push('/');
         }
         url.push_str(endpoint);
 
@@ -64,14 +64,14 @@ impl DruidClient {
             .header(reqwest::header::CONTENT_TYPE, "application/json")
             .send()
             .await
-            .map_err(|source| DruidClientError::HttpConnection { source: source })?
+            .map_err(|source| DruidClientError::HttpConnection { source })?
             .text()
             .await
-            .map_err(|source| DruidClientError::HttpConnection { source: source })?;
+            .map_err(|source| DruidClientError::HttpConnection { source })?;
 
         let json_value = serde_json::from_str::<serde_json::Value>(&response_str)
             .map_err(|err| DruidClientError::ParsingError { source: err });
-        if let Some(_) = json_value?.get("error") {
+        if json_value?.get("error").is_some() {
             return Err(DruidClientError::ServerError {
                 response: response_str,
             });
@@ -144,12 +144,10 @@ impl DruidClient {
             Err(e) => Err(e),
         };
 
-        let response = response.and_then(|str| {
+        response.and_then(|str| {
             serde_json::from_str::<Resp>(&str)
-                .map_err(|source| DruidClientError::ParsingResponseError { source: source })
-        });
-
-        response
+                .map_err(|source| DruidClientError::ParsingResponseError { source })
+        })
     }
 
     pub async fn datasource_metadata(
@@ -157,7 +155,7 @@ impl DruidClient {
         data_source: DataSource,
     ) -> ClientResult<Vec<MetadataResponse<HashMap<String, String>>>> {
         let query = DataSourceMetadata {
-            data_source: data_source,
+            data_source,
             context: Default::default(),
         };
 

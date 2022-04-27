@@ -47,13 +47,13 @@ impl SearchQuerySpec {
     pub fn constain(value: &str, case_sensitive: bool) -> Self {
         SearchQuerySpec::Contains {
             value: value.to_string(),
-            case_sensitive: case_sensitive,
+            case_sensitive,
         }
     }
     pub fn fragment(values: Vec<&str>, case_sensitive: bool) -> Self {
         SearchQuerySpec::Fragment {
             values: values.iter().map(|s| s.to_string()).collect(),
-            case_sensitive: case_sensitive,
+            case_sensitive,
         }
     }
 

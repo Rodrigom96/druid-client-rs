@@ -47,8 +47,8 @@ impl OrderByColumnSpec {
     pub fn new(dimension: &str, direction: Ordering, dimension_order: SortingOrder) -> Self {
         OrderByColumnSpec {
             dimension: dimension.to_string(),
-            direction: direction,
-            dimension_order: dimension_order,
+            direction,
+            dimension_order,
         }
     }
 }
@@ -73,24 +73,24 @@ pub enum HavingSpec {
 
 impl HavingSpec {
     pub fn filter(filter: Filter) -> Self {
-        HavingSpec::Filter { filter: filter }
+        HavingSpec::Filter { filter }
     }
     pub fn greater_than(aggregation: &str, value: JsonNumber) -> Self {
         HavingSpec::GreaterThan {
             aggregation: aggregation.to_string(),
-            value: value,
+            value,
         }
     }
     pub fn equal_to(aggregation: &str, value: JsonNumber) -> Self {
         HavingSpec::EqualTo {
             aggregation: aggregation.to_string(),
-            value: value,
+            value,
         }
     }
     pub fn less_than(aggregation: &str, value: JsonNumber) -> Self {
         HavingSpec::LessThan {
             aggregation: aggregation.to_string(),
-            value: value,
+            value,
         }
     }
 }
@@ -161,7 +161,7 @@ impl PostAggregator {
     pub fn constant(name: &str, value: JsonAny) -> Self {
         PostAggregator::Constant {
             name: name.to_string(),
-            value: value,
+            value,
         }
     }
     pub fn hyper_unique_cardinality(field_name: &str) -> Self {
@@ -189,7 +189,7 @@ pub struct GroupByBuilder {
 impl GroupByBuilder {
     pub fn new(data_source: DataSource) -> Self {
         GroupByBuilder {
-            data_source: data_source,
+            data_source,
             dimensions: vec![],
             limit_spec: None,
             having: None,

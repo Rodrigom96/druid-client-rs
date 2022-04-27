@@ -21,7 +21,7 @@ pub mod top_n;
 #[serde(untagged)]
 #[serde(rename_all = "camelCase")]
 pub enum Query {
-    GroupBy(GroupBy),
+    GroupBy(Box<GroupBy>),
     Scan(Scan),
     Search(Search),
     SegmentMetadata(SegmentMetadata),
@@ -36,7 +36,7 @@ impl From<TopN> for Query {
 }
 impl From<GroupBy> for Query {
     fn from(query: GroupBy) -> Self {
-        Query::GroupBy(query)
+        Query::GroupBy(Box::new(query))
     }
 }
 impl From<Scan> for Query {
@@ -102,7 +102,7 @@ impl JoinBuilder {
             right: None,
             right_prefix: None,
             condition: None,
-            join_type: join_type,
+            join_type,
         }
     }
     pub fn left(mut self, left: DataSource) -> Self {
@@ -129,11 +129,11 @@ impl JoinBuilder {
                 join_type: self.join_type.clone(),
                 left: Box::new(left),
                 right: Box::new(right),
-                condition: condition,
-                right_prefix: right_prefix,
+                condition,
+                right_prefix,
             })
         } else {
-            return None;
+            None
         }
     }
 }

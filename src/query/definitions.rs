@@ -502,7 +502,7 @@ impl<'de> serde::de::Deserialize<'de> for Interval {
         D: serde::de::Deserializer<'de>,
     {
         let s: String = Deserialize::deserialize(deserializer)?;
-        let split: Vec<&str> = s.split("/").collect();
+        let split: Vec<&str> = s.split('/').collect();
         if !split.len() == 2 {
             return Err(serde::de::Error::custom("Time must be separted by /"));
         }
