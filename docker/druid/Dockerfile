@@ -4,8 +4,8 @@ FROM openjdk:8-jre-alpine
 RUN set -ex; apk add --no-cache bash perl python curl
 
 RUN set -ex; \
-    curl -fsLS "http://mirror.cc.columbia.edu/pub/software/apache/druid/0.19.0/apache-druid-0.19.0-bin.tar.gz" | gunzip | tar x -C /opt; \
-    mv /opt/apache-druid-0.19.0 /opt/druid
+    curl -fsLS "https://archive.apache.org/dist/druid/0.22.0/apache-druid-0.22.0-bin.tar.gz" | gunzip | tar x -C /opt; \
+    mv /opt/apache-druid-0.22.0 /opt/druid
 
 WORKDIR /opt/druid/
 
