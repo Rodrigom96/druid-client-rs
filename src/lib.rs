@@ -51,10 +51,8 @@
 //!     query::{
 //!         definitions::{Aggregation, VirtualColumn},
 //!         definitions::{
-//!             Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder
-//!         },
-//!         group_by::{
-//!             PostAggregation, PostAggregator,
+//!             Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder,
+//!             PostAggregation, PostAggregator
 //!         },
 //!         DataSource
 //!     },

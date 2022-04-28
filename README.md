@@ -133,9 +133,9 @@ let group_by = GroupBy {
         output_name: "page".into(),
         output_type: OutputType::STRING,
     }],
-    limit_spec: Some(LimitSpec {
+    limit_spec: Some(Limit {
         limit: 10,
-        columns: vec![OrderByColumnSpec::new(
+        columns: vec![OrderByColumn::new(
             "page",
             Ordering::Descending,
             SortingOrder::Alphanumeric,
@@ -161,7 +161,7 @@ let group_by = GroupBy {
         ordering: None,
     }],
     virtual_columns: vec![],
-    having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
+    having: Some(Having::greater_than("count_fraction", 0.01.into())),
     intervals: vec![Interval{
         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
         to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),

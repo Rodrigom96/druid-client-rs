@@ -10,12 +10,10 @@ use druid_io::{
     query::{
         definitions::{Aggregation, VirtualColumn},
         definitions::{
-            Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder,
+            Dimension, Filter, Granularity, Having, Interval, Ordering, OutputType,
+            PostAggregation, PostAggregator, SortingOrder, Limit, OrderByColumn
         },
-        group_by::{
-            GroupBy, GroupByBuilder, HavingSpec, LimitSpec, OrderByColumnSpec, PostAggregation,
-            PostAggregator,
-        },
+        group_by::{GroupBy, GroupByBuilder},
         scan::{ResultFormat, Scan},
         search::SearchQuerySpec,
         segment_metadata::{AnalysisType, SegmentMetadata, ToInclude},
@@ -157,9 +155,9 @@ fn test_group_by() {
                 output_type: OutputType::STRING,
             },
         ],
-        limit_spec: Some(LimitSpec {
+        limit_spec: Some(Limit {
             limit: 10,
-            columns: vec![OrderByColumnSpec::new(
+            columns: vec![OrderByColumn::new(
                 "page",
                 Ordering::Descending,
                 SortingOrder::Alphanumeric,
@@ -189,7 +187,7 @@ fn test_group_by() {
             expression: "concat('foo' + page)".into(),
             output_type: OutputType::STRING,
         }],
-        having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
+        having: Some(Having::greater_than("count_fraction", 0.01.into())),
         intervals: vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
@@ -281,15 +279,15 @@ fn test_group_by_builder() {
                 output_type: OutputType::STRING,
             },
         ])
-        .limit(LimitSpec {
+        .limit(Limit {
             limit: 10,
-            columns: vec![OrderByColumnSpec::new(
+            columns: vec![OrderByColumn::new(
                 "title",
                 Ordering::Descending,
                 SortingOrder::Alphanumeric,
             )],
         })
-        .having(HavingSpec::greater_than("count_ololo", 0.001.into()))
+        .having(Having::greater_than("count_ololo", 0.001.into()))
         .filter(Filter::selector("user", "Taffe316"))
         .aggregations(vec![
             Aggregation::count("count"),

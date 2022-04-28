@@ -2,7 +2,7 @@ use super::definitions::Filter;
 use super::definitions::Granularity;
 use super::definitions::Interval;
 use super::definitions::VirtualColumn;
-use super::group_by::PostAggregation;
+use super::definitions::PostAggregation;
 use super::DataSource;
 use crate::query::definitions::Aggregation;
 use serde::{Deserialize, Serialize};
