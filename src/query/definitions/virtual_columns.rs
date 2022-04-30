@@ -13,3 +13,13 @@ pub enum VirtualColumn {
         output_type: OutputType,
     },
 }
+
+impl VirtualColumn {
+    pub fn expression(name: &str, expression: &str, output_type: OutputType) -> VirtualColumn {
+        VirtualColumn::Expression {
+            name: name.to_string(),
+            expression: expression.to_string(),
+            output_type,
+        }
+    }
+}

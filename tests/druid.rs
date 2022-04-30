@@ -46,11 +46,11 @@ fn test_top_n_query() {
             Aggregation::string_first("user", "user", 1024),
             Aggregation::string_first("foo_page", "foo_page", 1024),
         ],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )],
         intervals: vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
@@ -116,11 +116,11 @@ fn test_scan_join() {
         }],
         result_format: ResultFormat::List,
         columns: vec![],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )],
         limit: Some(10),
         filter: None,
         ordering: Some(Ordering::None),
@@ -170,11 +170,11 @@ fn test_group_by() {
             ],
             None,
         )],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )],
         having: Some(Having::greater_than("count_fraction", 0.01.into())),
         intervals: vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
@@ -220,11 +220,11 @@ fn test_timeseries() {
             ],
             None,
         )],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_user".into(),
-            expression: "concat('foo' + user)".into(),
-            output_type: OutputType::STRING,
-        }],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_user",
+            "concat('foo' + user)",
+            OutputType::STRING,
+        )],
         intervals: vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
@@ -282,11 +282,11 @@ fn test_group_by_builder() {
             ],
             None,
         )])
-        .virtual_columns(vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }])
+        .virtual_columns(vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )])
         .intervals(vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),

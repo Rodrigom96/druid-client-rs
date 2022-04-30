@@ -88,11 +88,11 @@
 //!         ],
 //!         None,
 //!     )],
-//!     virtual_columns: vec![VirtualColumn::Expression {
-//!        name: "foo_user".into(),
-//!        expression: "concat('foo' + user)".into(),
-//!        output_type: OutputType::STRING ,
-//!     }],
+//!     virtual_columns: vec![VirtualColumn::expression(
+//!         "foo_user",
+//!         "concat('foo' + user)",
+//!         OutputType::STRING,
+//!     )],
 //!     intervals: vec![Interval{
 //!         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
 //!         to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
