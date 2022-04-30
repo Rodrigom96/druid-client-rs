@@ -79,15 +79,15 @@
 //!         Aggregation::string_first("user", "user", 1024),
 //!         Aggregation::string_first("foo_user", "foo_user", 1024),
 //!     ],
-//!     post_aggregations: vec![PostAggregation::Arithmetic {
-//!         name: "count_fraction".into(),
-//!         function: "/".into(),
-//!         fields: vec![
+//!     post_aggregations: vec![PostAggregation::arithmetic(
+//!         "count_fraction",
+//!         "/",
+//!         vec![
 //!             PostAggregator::field_access("count_percent", "count"),
 //!             PostAggregator::constant("hundred", 100.into()),
 //!         ],
-//!         ordering: None,
-//!     }],
+//!         None,
+//!     )],
 //!     virtual_columns: vec![VirtualColumn::Expression {
 //!        name: "foo_user".into(),
 //!        expression: "concat('foo' + user)".into(),

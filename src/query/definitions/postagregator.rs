@@ -38,6 +38,46 @@ pub enum PostAggregation {
     },
 }
 
+impl PostAggregation {
+    pub fn arithmetic(
+        name: &str,
+        function: &str,
+        fields: Vec<PostAggregator>,
+        ordering: Option<&str>,
+    ) -> PostAggregation {
+        PostAggregation::Arithmetic {
+            name: name.to_string(),
+            function: function.to_string(),
+            fields,
+            ordering: ordering.map(|s| s.to_string()),
+        }
+    }
+    pub fn double_greatest(name: &str, fields: Vec<PostAggregation>) -> PostAggregation {
+        PostAggregation::DoubleGreatest {
+            name: name.to_string(),
+            fields,
+        }
+    }
+    pub fn long_greatest(name: &str, fields: Vec<PostAggregation>) -> PostAggregation {
+        PostAggregation::LongGreatest {
+            name: name.to_string(),
+            fields,
+        }
+    }
+    pub fn long_least(name: &str, fields: Vec<PostAggregation>) -> PostAggregation {
+        PostAggregation::LongLeast {
+            name: name.to_owned(),
+            fields,
+        }
+    }
+    pub fn double_least(name: &str, fields: Vec<PostAggregation>) -> PostAggregation {
+        PostAggregation::DoubleLeast {
+            name: name.to_string(),
+            fields,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 #[serde(tag = "type")]

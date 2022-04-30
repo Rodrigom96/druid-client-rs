@@ -60,15 +60,15 @@ let timeseries = Timeseries {
         Aggregation::count("count"),
         Aggregation::string_first("user", "user", 1024),
     ],
-    post_aggregations: vec![PostAggregation::Arithmetic {
-        name: "count_fraction".into(),
-        function: "/".into(),
-        fields: vec![
+    post_aggregations: vec![PostAggregation::arithmetic(
+        "count_fraction",
+        "/",
+        vec![
             PostAggregator::field_access("count_percent", "count"),
             PostAggregator::constant("hundred", 100.into()),
         ],
-        ordering: None,
-    }],
+        None,
+    )],
     virtual_columns: vec![],
     intervals: vec![Interval{
         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
@@ -139,15 +139,15 @@ let group_by = GroupBy {
         Aggregation::count("count"),
         Aggregation::string_first("user", "user", 1024),
     ],
-    post_aggregations: vec![PostAggregation::Arithmetic {
-        name: "count_fraction".into(),
-        function: "/".into(),
-        fields: vec![
+    post_aggregations: vec![PostAggregation::arithmetic(
+        "count_fraction",
+        "/",
+        vec![
             PostAggregator::field_access("count_percent", "count"),
             PostAggregator::constant("hundred", 100.into()),
         ],
-        ordering: None,
-    }],
+        None,
+    )],
     virtual_columns: vec![],
     having: Some(Having::greater_than("count_fraction", 0.01.into())),
     intervals: vec![Interval{
