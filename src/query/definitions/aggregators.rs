@@ -72,7 +72,6 @@ pub enum Aggregation {
     Filtered { filter: Filter, aggregator: Box<Aggregation>}
 }
 
-// todo: macro
 impl Aggregation {
     pub fn count(name: &str) -> Aggregation {
         Aggregation::Count {
@@ -143,6 +142,44 @@ impl Aggregation {
         Aggregation::FloatFirst {
             name: name.to_string(),
             field_name: field_name.to_string(),
+        }
+    }
+    pub fn double_first(name: &str, field_name: &str) -> Aggregation {
+        Aggregation::DoubleFirst {
+            name: name.to_string(),
+            field_name: field_name.to_string(),
+        }
+    }
+    pub fn long_last(name: &str, field_name: &str) -> Aggregation {
+        Aggregation::LongLast {
+            name: name.to_string(),
+            field_name: field_name.to_string(),
+        }
+    }
+    pub fn float_last(name: &str, field_name: &str) -> Aggregation {
+        Aggregation::FloatLast {
+            name: name.to_string(),
+            field_name: field_name.to_string(),
+        }
+    }
+    pub fn double_last(name: &str, field_name: &str) -> Aggregation {
+        Aggregation::DoubleLast {
+            name: name.to_string(),
+            field_name: field_name.to_string(),
+        }
+    }
+    pub fn string_first(name: &str, field_name: &str, max_string_bytes: usize) -> Aggregation {
+        Aggregation::StringFirst {
+            name: name.to_string(),
+            field_name: field_name.to_string(),
+            max_string_bytes,
+        }
+    }
+    pub fn string_last(name: &str, field_name: &str, max_string_bytes: usize) -> Aggregation {
+        Aggregation::StringLast {
+            name: name.to_string(),
+            field_name: field_name.to_string(),
+            max_string_bytes,
         }
     }
 }

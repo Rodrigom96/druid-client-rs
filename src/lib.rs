@@ -76,16 +76,8 @@
 //!     filter: Some(Filter::selector("user", "Taffe316")),
 //!     aggregations: vec![
 //!         Aggregation::count("count"),
-//!         Aggregation::StringFirst {
-//!             name: "user".into(),
-//!             field_name: "user".into(),
-//!             max_string_bytes: 1024,
-//!         },
-//!         Aggregation::StringFirst {
-//!             name: "foo_user".into(),
-//!             field_name: "foo_user".into(),
-//!             max_string_bytes: 1024,
-//!         },
+//!         Aggregation::string_first("user", "user", 1024),
+//!         Aggregation::string_first("foo_user", "foo_user", 1024),
 //!     ],
 //!     post_aggregations: vec![PostAggregation::Arithmetic {
 //!         name: "count_fraction".into(),

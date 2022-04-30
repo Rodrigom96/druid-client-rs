@@ -10,8 +10,8 @@ use druid_io::{
     query::{
         definitions::{Aggregation, VirtualColumn},
         definitions::{
-            Dimension, Filter, Granularity, Having, Interval, Ordering, OutputType,
-            PostAggregation, PostAggregator, SortingOrder, Limit, OrderByColumn
+            Dimension, Filter, Granularity, Having, Interval, Limit, OrderByColumn, Ordering,
+            OutputType, PostAggregation, PostAggregator, SortingOrder,
         },
         group_by::{GroupBy, GroupByBuilder},
         scan::{ResultFormat, Scan},
@@ -43,16 +43,8 @@ fn test_top_n_query() {
         metric: "count".into(),
         aggregations: vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
-            Aggregation::StringFirst {
-                name: "foo_page".into(),
-                field_name: "foo_page".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
+            Aggregation::string_first("foo_page", "foo_page", 1024),
         ],
         virtual_columns: vec![VirtualColumn::Expression {
             name: "foo_page".into(),
@@ -167,11 +159,7 @@ fn test_group_by() {
         filter: Some(Filter::selector("user", "Taffe316")),
         aggregations: vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
         ],
         post_aggregations: vec![PostAggregation::Arithmetic {
             name: "count_fraction".into(),
@@ -220,16 +208,8 @@ fn test_timeseries() {
         filter: None, //Some(Filter::selector("user", "Taffe316")),
         aggregations: vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
-            Aggregation::StringFirst {
-                name: "foo_user".into(),
-                field_name: "foo_user".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
+            Aggregation::string_first("foo_user", "foo_user", 1024),
         ],
         post_aggregations: vec![PostAggregation::Arithmetic {
             name: "count_ololo".into(),
@@ -291,11 +271,7 @@ fn test_group_by_builder() {
         .filter(Filter::selector("user", "Taffe316"))
         .aggregations(vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
         ])
         .post_aggregations(vec![PostAggregation::Arithmetic {
             name: "count_ololo".into(),

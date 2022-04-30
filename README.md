@@ -58,11 +58,7 @@ let timeseries = Timeseries {
     filter: Some(Filter::selector("user", "Taffe316")),
     aggregations: vec![
         Aggregation::count("count"),
-        Aggregation::StringFirst {
-            name: "user".into(),
-            field_name: "user".into(),
-            max_string_bytes: 1024,
-        },
+        Aggregation::string_first("user", "user", 1024),
     ],
     post_aggregations: vec![PostAggregation::Arithmetic {
         name: "count_fraction".into(),
@@ -102,11 +98,7 @@ let top_n = TopN {
     metric: "count".into(),
     aggregations: vec![
         Aggregation::count("count"),
-        Aggregation::StringFirst {
-            name: "user".into(),
-            field_name: "user".into(),
-            max_string_bytes: 1024,
-        },
+        Aggregation::string_first("user", "user", 1024),
     ],
     virtual_columns: vec![],
     intervals: vec![Interval{
@@ -145,11 +137,7 @@ let group_by = GroupBy {
     filter: Some(Filter::selector("user", "Taffe316")),
     aggregations: vec![
         Aggregation::count("count"),
-        Aggregation::StringFirst {
-            name: "user".into(),
-            field_name: "user".into(),
-            max_string_bytes: 1024,
-        },
+        Aggregation::string_first("user", "user", 1024),
     ],
     post_aggregations: vec![PostAggregation::Arithmetic {
         name: "count_fraction".into(),
