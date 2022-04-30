@@ -51,10 +51,8 @@
 //!     query::{
 //!         definitions::{Aggregation, VirtualColumn},
 //!         definitions::{
-//!             Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder
-//!         },
-//!         group_by::{
-//!             PostAggregation, PostAggregator,
+//!             Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder,
+//!             PostAggregation, PostAggregator
 //!         },
 //!         DataSource
 //!     },
@@ -78,31 +76,23 @@
 //!     filter: Some(Filter::selector("user", "Taffe316")),
 //!     aggregations: vec![
 //!         Aggregation::count("count"),
-//!         Aggregation::StringFirst {
-//!             name: "user".into(),
-//!             field_name: "user".into(),
-//!             max_string_bytes: 1024,
-//!         },
-//!         Aggregation::StringFirst {
-//!             name: "foo_user".into(),
-//!             field_name: "foo_user".into(),
-//!             max_string_bytes: 1024,
-//!         },
+//!         Aggregation::string_first("user", "user", 1024),
+//!         Aggregation::string_first("foo_user", "foo_user", 1024),
 //!     ],
-//!     post_aggregations: vec![PostAggregation::Arithmetic {
-//!         name: "count_fraction".into(),
-//!         function: "/".into(),
-//!         fields: vec![
+//!     post_aggregations: vec![PostAggregation::arithmetic(
+//!         "count_fraction",
+//!         "/",
+//!         vec![
 //!             PostAggregator::field_access("count_percent", "count"),
 //!             PostAggregator::constant("hundred", 100.into()),
 //!         ],
-//!         ordering: None,
-//!     }],
-//!     virtual_columns: vec![VirtualColumn::Expression {
-//!        name: "foo_user".into(),
-//!        expression: "concat('foo' + user)".into(),
-//!        output_type: OutputType::STRING ,
-//!     }],
+//!         None,
+//!     )],
+//!     virtual_columns: vec![VirtualColumn::expression(
+//!         "foo_user",
+//!         "concat('foo' + user)",
+//!         OutputType::STRING,
+//!     )],
 //!     intervals: vec![Interval{
 //!         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
 //!         to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),

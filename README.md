@@ -58,21 +58,17 @@ let timeseries = Timeseries {
     filter: Some(Filter::selector("user", "Taffe316")),
     aggregations: vec![
         Aggregation::count("count"),
-        Aggregation::StringFirst {
-            name: "user".into(),
-            field_name: "user".into(),
-            max_string_bytes: 1024,
-        },
+        Aggregation::string_first("user", "user", 1024),
     ],
-    post_aggregations: vec![PostAggregation::Arithmetic {
-        name: "count_fraction".into(),
-        function: "/".into(),
-        fields: vec![
+    post_aggregations: vec![PostAggregation::arithmetic(
+        "count_fraction",
+        "/",
+        vec![
             PostAggregator::field_access("count_percent", "count"),
             PostAggregator::constant("hundred", 100.into()),
         ],
-        ordering: None,
-    }],
+        None,
+    )],
     virtual_columns: vec![],
     intervals: vec![Interval{
         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
@@ -102,11 +98,7 @@ let top_n = TopN {
     metric: "count".into(),
     aggregations: vec![
         Aggregation::count("count"),
-        Aggregation::StringFirst {
-            name: "user".into(),
-            field_name: "user".into(),
-            max_string_bytes: 1024,
-        },
+        Aggregation::string_first("user", "user", 1024),
     ],
     virtual_columns: vec![],
     intervals: vec![Interval{
@@ -133,9 +125,9 @@ let group_by = GroupBy {
         output_name: "page".into(),
         output_type: OutputType::STRING,
     }],
-    limit_spec: Some(LimitSpec {
+    limit_spec: Some(Limit {
         limit: 10,
-        columns: vec![OrderByColumnSpec::new(
+        columns: vec![OrderByColumn::new(
             "page",
             Ordering::Descending,
             SortingOrder::Alphanumeric,
@@ -145,23 +137,19 @@ let group_by = GroupBy {
     filter: Some(Filter::selector("user", "Taffe316")),
     aggregations: vec![
         Aggregation::count("count"),
-        Aggregation::StringFirst {
-            name: "user".into(),
-            field_name: "user".into(),
-            max_string_bytes: 1024,
-        },
+        Aggregation::string_first("user", "user", 1024),
     ],
-    post_aggregations: vec![PostAggregation::Arithmetic {
-        name: "count_fraction".into(),
-        function: "/".into(),
-        fields: vec![
+    post_aggregations: vec![PostAggregation::arithmetic(
+        "count_fraction",
+        "/",
+        vec![
             PostAggregator::field_access("count_percent", "count"),
             PostAggregator::constant("hundred", 100.into()),
         ],
-        ordering: None,
-    }],
+        None,
+    )],
     virtual_columns: vec![],
-    having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
+    having: Some(Having::greater_than("count_fraction", 0.01.into())),
     intervals: vec![Interval{
         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
         to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),

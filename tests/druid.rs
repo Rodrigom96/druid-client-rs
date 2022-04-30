@@ -10,12 +10,10 @@ use druid_io::{
     query::{
         definitions::{Aggregation, VirtualColumn},
         definitions::{
-            Dimension, Filter, Granularity, Interval, Ordering, OutputType, SortingOrder,
+            Dimension, Filter, Granularity, Having, Interval, Limit, OrderByColumn, Ordering,
+            OutputType, PostAggregation, PostAggregator, SortingOrder,
         },
-        group_by::{
-            GroupBy, GroupByBuilder, HavingSpec, LimitSpec, OrderByColumnSpec, PostAggregation,
-            PostAggregator,
-        },
+        group_by::{GroupBy, GroupByBuilder},
         scan::{ResultFormat, Scan},
         search::SearchQuerySpec,
         segment_metadata::{AnalysisType, SegmentMetadata, ToInclude},
@@ -45,22 +43,14 @@ fn test_top_n_query() {
         metric: "count".into(),
         aggregations: vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
-            Aggregation::StringFirst {
-                name: "foo_page".into(),
-                field_name: "foo_page".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
+            Aggregation::string_first("foo_page", "foo_page", 1024),
         ],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )],
         intervals: vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
@@ -126,11 +116,11 @@ fn test_scan_join() {
         }],
         result_format: ResultFormat::List,
         columns: vec![],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )],
         limit: Some(10),
         filter: None,
         ordering: Some(Ordering::None),
@@ -157,9 +147,9 @@ fn test_group_by() {
                 output_type: OutputType::STRING,
             },
         ],
-        limit_spec: Some(LimitSpec {
+        limit_spec: Some(Limit {
             limit: 10,
-            columns: vec![OrderByColumnSpec::new(
+            columns: vec![OrderByColumn::new(
                 "page",
                 Ordering::Descending,
                 SortingOrder::Alphanumeric,
@@ -169,27 +159,23 @@ fn test_group_by() {
         filter: Some(Filter::selector("user", "Taffe316")),
         aggregations: vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
         ],
-        post_aggregations: vec![PostAggregation::Arithmetic {
-            name: "count_fraction".into(),
-            function: "/".into(),
-            fields: vec![
+        post_aggregations: vec![PostAggregation::arithmetic(
+            "count_fraction",
+            "/",
+            vec![
                 PostAggregator::field_access("count_percent", "count"),
                 PostAggregator::constant("hundred", 100.into()),
             ],
-            ordering: None,
-        }],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }],
-        having: Some(HavingSpec::greater_than("count_fraction", 0.01.into())),
+            None,
+        )],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )],
+        having: Some(Having::greater_than("count_fraction", 0.01.into())),
         intervals: vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
@@ -222,31 +208,23 @@ fn test_timeseries() {
         filter: None, //Some(Filter::selector("user", "Taffe316")),
         aggregations: vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
-            Aggregation::StringFirst {
-                name: "foo_user".into(),
-                field_name: "foo_user".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
+            Aggregation::string_first("foo_user", "foo_user", 1024),
         ],
-        post_aggregations: vec![PostAggregation::Arithmetic {
-            name: "count_ololo".into(),
-            function: "/".into(),
-            fields: vec![
+        post_aggregations: vec![PostAggregation::arithmetic(
+            "count_ololo",
+            "/",
+            vec![
                 PostAggregator::field_access("count_percent", "count"),
                 PostAggregator::constant("hundred", 100.into()),
             ],
-            ordering: None,
-        }],
-        virtual_columns: vec![VirtualColumn::Expression {
-            name: "foo_user".into(),
-            expression: "concat('foo' + user)".into(),
-            output_type: OutputType::STRING,
-        }],
+            None,
+        )],
+        virtual_columns: vec![VirtualColumn::expression(
+            "foo_user",
+            "concat('foo' + user)",
+            OutputType::STRING,
+        )],
         intervals: vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
@@ -281,38 +259,34 @@ fn test_group_by_builder() {
                 output_type: OutputType::STRING,
             },
         ])
-        .limit(LimitSpec {
+        .limit(Limit {
             limit: 10,
-            columns: vec![OrderByColumnSpec::new(
+            columns: vec![OrderByColumn::new(
                 "title",
                 Ordering::Descending,
                 SortingOrder::Alphanumeric,
             )],
         })
-        .having(HavingSpec::greater_than("count_ololo", 0.001.into()))
+        .having(Having::greater_than("count_ololo", 0.001.into()))
         .filter(Filter::selector("user", "Taffe316"))
         .aggregations(vec![
             Aggregation::count("count"),
-            Aggregation::StringFirst {
-                name: "user".into(),
-                field_name: "user".into(),
-                max_string_bytes: 1024,
-            },
+            Aggregation::string_first("user", "user", 1024),
         ])
-        .post_aggregations(vec![PostAggregation::Arithmetic {
-            name: "count_ololo".into(),
-            function: "/".into(),
-            fields: vec![
+        .post_aggregations(vec![PostAggregation::arithmetic(
+            "count_ololo",
+            "/",
+            vec![
                 PostAggregator::field_access("count_percent", "count"),
                 PostAggregator::constant("hundred", 100.into()),
             ],
-            ordering: None,
-        }])
-        .virtual_columns(vec![VirtualColumn::Expression {
-            name: "foo_page".into(),
-            expression: "concat('foo' + page)".into(),
-            output_type: OutputType::STRING,
-        }])
+            None,
+        )])
+        .virtual_columns(vec![VirtualColumn::expression(
+            "foo_page",
+            "concat('foo' + page)",
+            OutputType::STRING,
+        )])
         .intervals(vec![Interval {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),

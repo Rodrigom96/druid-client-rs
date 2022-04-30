@@ -4,9 +4,10 @@ use super::definitions::Granularity;
 use super::definitions::Interval;
 use super::definitions::VirtualColumn;
 use super::DataSource;
-use super::{definitions::Ordering, JsonAny, JsonNumber};
 use crate::query::definitions::Aggregation;
-use crate::query::definitions::SortingOrder;
+use crate::query::definitions::Having;
+use crate::query::definitions::PostAggregation;
+use crate::query::definitions::Limit;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -15,8 +16,8 @@ use serde::{Deserialize, Serialize};
 pub struct GroupBy {
     pub data_source: DataSource,
     pub dimensions: Vec<Dimension>,
-    pub limit_spec: Option<LimitSpec>,
-    pub having: Option<HavingSpec>,
+    pub limit_spec: Option<Limit>,
+    pub having: Option<Having>,
     pub granularity: Granularity,
     pub filter: Option<Filter>,
     pub aggregations: Vec<Aggregation>,
@@ -27,155 +28,11 @@ pub struct GroupBy {
     pub context: std::collections::HashMap<String, String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-#[serde(tag = "type", rename = "default")]
-pub struct LimitSpec {
-    pub limit: usize,
-    pub columns: Vec<OrderByColumnSpec>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct OrderByColumnSpec {
-    pub dimension: String,
-    pub direction: Ordering,
-    pub dimension_order: SortingOrder,
-}
-
-impl OrderByColumnSpec {
-    pub fn new(dimension: &str, direction: Ordering, dimension_order: SortingOrder) -> Self {
-        OrderByColumnSpec {
-            dimension: dimension.to_string(),
-            direction,
-            dimension_order,
-        }
-    }
-}
-
-#[rustfmt::skip]
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-#[serde(tag = "type")]
-pub enum HavingSpec {
-    Filter { filter: Filter},
-    GreaterThan { aggregation: String, value: JsonNumber },
-    EqualTo { aggregation: String, value: JsonNumber },
-    LessThan { aggregation: String, value: JsonNumber },
-    DimSelector { dimension: Dimension, value: JsonAny }, //todo
-    #[serde(rename_all = "camelCase")]
-    And { having_specs: Vec<HavingSpec> },
-    #[serde(rename_all = "camelCase")]
-    Or { having_specs: Vec<HavingSpec> },
-    #[serde(rename_all = "camelCase")]
-    Not { having_specs: Box<HavingSpec> },
-}
-
-impl HavingSpec {
-    pub fn filter(filter: Filter) -> Self {
-        HavingSpec::Filter { filter }
-    }
-    pub fn greater_than(aggregation: &str, value: JsonNumber) -> Self {
-        HavingSpec::GreaterThan {
-            aggregation: aggregation.to_string(),
-            value,
-        }
-    }
-    pub fn equal_to(aggregation: &str, value: JsonNumber) -> Self {
-        HavingSpec::EqualTo {
-            aggregation: aggregation.to_string(),
-            value,
-        }
-    }
-    pub fn less_than(aggregation: &str, value: JsonNumber) -> Self {
-        HavingSpec::LessThan {
-            aggregation: aggregation.to_string(),
-            value,
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-#[serde(tag = "type")]
-pub enum PostAggregation {
-    #[serde(rename_all = "camelCase")]
-    Arithmetic {
-        name: String,
-        #[serde(rename(serialize = "fn"))]
-        function: String,
-        fields: Vec<PostAggregator>,
-        ordering: Option<String>,
-    },
-    DoubleGreatest {
-        name: String,
-        fields: Vec<PostAggregation>,
-    },
-    LongGreatest {
-        name: String,
-        fields: Vec<PostAggregation>,
-    },
-    LongLeast {
-        name: String,
-        fields: Vec<PostAggregation>,
-    },
-    DoubleLeast {
-        name: String,
-        fields: Vec<PostAggregation>,
-    },
-    #[serde(rename_all = "camelCase")]
-    Javascript {
-        name: String,
-        field_names: Vec<String>,
-        function: String,
-    },
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-#[serde(tag = "type")]
-pub enum PostAggregator {
-    #[serde(rename_all = "camelCase")]
-    FieldAccess { name: String, field_name: String },
-    #[serde(rename_all = "camelCase")]
-    FinalizingFieldAccess { name: String, field_name: String },
-    #[serde(rename_all = "camelCase")]
-    Constant { name: String, value: JsonAny },
-    #[serde(rename_all = "camelCase")]
-    HyperUniqueCardinality { field_name: String },
-}
-
-impl PostAggregator {
-    pub fn field_access(name: &str, field_name: &str) -> Self {
-        PostAggregator::FieldAccess {
-            name: name.to_string(),
-            field_name: field_name.to_string(),
-        }
-    }
-    pub fn finalized_field_access(name: &str, field_name: &str) -> Self {
-        PostAggregator::FinalizingFieldAccess {
-            name: name.to_string(),
-            field_name: field_name.to_string(),
-        }
-    }
-    pub fn constant(name: &str, value: JsonAny) -> Self {
-        PostAggregator::Constant {
-            name: name.to_string(),
-            value,
-        }
-    }
-    pub fn hyper_unique_cardinality(field_name: &str) -> Self {
-        PostAggregator::HyperUniqueCardinality {
-            field_name: field_name.to_string(),
-        }
-    }
-}
-
 pub struct GroupByBuilder {
     data_source: DataSource,
     dimensions: Vec<Dimension>,
-    limit_spec: Option<LimitSpec>,
-    having: Option<HavingSpec>,
+    limit_spec: Option<Limit>,
+    having: Option<Having>,
     granularity: Granularity,
     filter: Option<Filter>,
     aggregations: Vec<Aggregation>,
@@ -207,11 +64,11 @@ impl GroupByBuilder {
         self.dimensions = dimensions;
         self
     }
-    pub fn limit(mut self, limit: LimitSpec) -> Self {
+    pub fn limit(mut self, limit: Limit) -> Self {
         self.limit_spec = Some(limit);
         self
     }
-    pub fn having(mut self, having: HavingSpec) -> Self {
+    pub fn having(mut self, having: Having) -> Self {
         self.having = Some(having);
         self
     }
