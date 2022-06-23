@@ -17,7 +17,7 @@ pub use aggregators::Aggregation;
 pub use dimensions::Dimension;
 pub use extraction_functions::{ExtractFN, NullHandling};
 pub use filters::{Filter, FilterQuerySpec};
-pub use granularitys::Granularity;
+pub use granularitys::{Granularity, GranularityBase, GranularityTyped};
 pub use having::Having;
 pub use hll_sketch::HllType;
 pub use intervals::Interval;

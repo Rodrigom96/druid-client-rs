@@ -54,7 +54,7 @@ let timeseries = Timeseries {
     data_source: DataSource::table("wikipedia"),
     limit: Some(10),
     descending: false,
-    granularity: Granularity::All,
+    granularity: Granularity::all(),
     filter: Some(Filter::selector("user", "Taffe316")),
     aggregations: vec![
         Aggregation::count("count"),
@@ -105,7 +105,7 @@ let top_n = TopN {
         from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
         to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
     }],
-    granularity: Granularity::All,
+    granularity: Granularity::all(),
     context: Default::default(),
 };
 let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
@@ -133,7 +133,7 @@ let group_by = GroupBy {
             SortingOrder::Alphanumeric,
         )],
     }),
-    granularity: Granularity::All,
+    granularity: Granularity::all(),
     filter: Some(Filter::selector("user", "Taffe316")),
     aggregations: vec![
         Aggregation::count("count"),

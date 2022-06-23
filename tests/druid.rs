@@ -55,7 +55,7 @@ fn test_top_n_query() {
             from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
-        granularity: Granularity::All,
+        granularity: Granularity::all(),
         context: context,
     };
     let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
@@ -155,7 +155,7 @@ fn test_group_by() {
                 SortingOrder::Alphanumeric,
             )],
         }),
-        granularity: Granularity::All,
+        granularity: Granularity::all(),
         filter: Some(Filter::selector("user", "Taffe316")),
         aggregations: vec![
             Aggregation::count("count"),
@@ -204,7 +204,7 @@ fn test_timeseries() {
         data_source: DataSource::table("wikipedia"),
         limit: Some(10),
         descending: false,
-        granularity: Granularity::All,
+        granularity: Granularity::all(),
         filter: None, //Some(Filter::selector("user", "Taffe316")),
         aggregations: vec![
             Aggregation::count("count"),
@@ -313,7 +313,7 @@ fn test_search() {
             to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
         }],
         context: Default::default(),
-        granularity: Granularity::All,
+        granularity: Granularity::all(),
     };
     let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
     let result = tokio_test::block_on(druid_client.search::<WikiPage>(&search));
