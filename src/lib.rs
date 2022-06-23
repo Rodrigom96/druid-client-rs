@@ -72,7 +72,7 @@
 //!     data_source: DataSource::table("wikipedia"),
 //!     limit: Some(10),
 //!     descending: false,
-//!     granularity: Granularity::All,
+//!     granularity: Granularity::all(),
 //!     filter: Some(Filter::selector("user", "Taffe316")),
 //!     aggregations: vec![
 //!         Aggregation::count("count"),

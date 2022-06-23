@@ -1,6 +1,6 @@
 use super::definitions::Dimension;
 use super::definitions::Filter;
-use super::definitions::Granularity;
+use super::definitions::{Granularity, GranularityTyped};
 use super::definitions::Interval;
 use super::definitions::VirtualColumn;
 use super::DataSource;
@@ -50,7 +50,7 @@ impl GroupByBuilder {
             dimensions: vec![],
             limit_spec: None,
             having: None,
-            granularity: Granularity::All,
+            granularity: Granularity::all(),
             filter: None,
             aggregations: vec![],
             post_aggregations: vec![],
