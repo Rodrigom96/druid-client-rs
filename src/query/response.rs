@@ -40,10 +40,10 @@ pub type SearchResponse = DruidListResponse<DimValue>;
 #[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ScanResponse<T: DeserializeOwned> {
-    segment_id: String,
-    columns: Vec<String>,
+    pub segment_id: String,
+    pub columns: Vec<String>,
     #[serde(bound(deserialize = ""))]
-    events: Vec<T>,
+    pub events: Vec<T>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
