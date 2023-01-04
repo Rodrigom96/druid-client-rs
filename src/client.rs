@@ -43,7 +43,7 @@ pub struct DruidClient {
 }
 
 impl DruidClient {
-    pub fn new(url: &str, endpoint: &str) -> Self {
+    pub fn new(url: &str, endpoint: &str, client: Client) -> Self {
         let mut url = url.to_string();
         if !url.ends_with('/') {
             url.push('/');
@@ -52,7 +52,7 @@ impl DruidClient {
 
         DruidClient {
             url,
-            http_client: Client::new(),
+            http_client: client,
         }
     }
 
@@ -160,5 +160,32 @@ impl DruidClient {
         };
 
         self._query(&query).await
+    }
+}
+
+pub struct DruidClientBuilder {
+    url: String,
+    endpoint: Option<String>,
+    client: Option<Client>,
+}
+
+impl DruidClientBuilder {
+    pub fn new(url: &str) -> Self {
+        Self {
+            url: url.to_string(),
+            endpoint: None,
+            client: None,
+        }
+    }
+
+    pub fn client(&mut self, client: Client) {
+        self.client = Some(client);
+    }
+
+    pub fn build(self) -> DruidClient {
+        let endpoint = self.endpoint.unwrap_or("druid/v2".into());
+        let client = self.client.unwrap_or(Client::new());
+
+        DruidClient::new(&self.url, &endpoint, client)
     }
 }
