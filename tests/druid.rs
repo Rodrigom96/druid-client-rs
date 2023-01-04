@@ -3,7 +3,7 @@ extern crate tokio;
 
 use chrono::NaiveDate;
 use druid_io::{
-    client::DruidClient,
+    client::DruidClientBuilder,
     query::search::Search,
     query::timeseries::Timeseries,
     query::top_n::TopN,
@@ -58,7 +58,7 @@ fn test_top_n_query() {
         granularity: Granularity::all(),
         context: context,
     };
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.top_n::<WikiPage>(&top_n));
     println!("{:?}", result.unwrap());
 }
@@ -127,7 +127,7 @@ fn test_scan_join() {
         context: std::collections::HashMap::new(),
     };
 
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.scan::<ScanEvent>(&scan));
     println!("{:?}", result.unwrap());
 }
@@ -183,7 +183,7 @@ fn test_group_by() {
         subtotal_spec: Default::default(),
         context: Default::default(),
     };
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.group_by::<WikiPage>(&group_by));
     println!("{:?}", result.unwrap());
 }
@@ -231,7 +231,7 @@ fn test_timeseries() {
         }],
         context: context,
     };
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.timeseries::<TimeAggr>(&timeseries));
     println!("{:?}", result.unwrap());
 }
@@ -294,7 +294,7 @@ fn test_group_by_builder() {
         .add_context("groupByStrategy", "v2")
         // .add_context("resultAsArray", "true")
         .build();
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.group_by::<Page>(&group_by));
     println!("{:?}", result.unwrap());
 }
@@ -315,7 +315,7 @@ fn test_search() {
         context: Default::default(),
         granularity: Granularity::all(),
     };
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.search::<WikiPage>(&search));
     println!("{:?}", result.unwrap());
 }
@@ -327,13 +327,13 @@ fn test_time_boundary() {
         context: Default::default(),
         bound: TimeBoundType::MinMaxTime,
     };
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.time_boundary::<WikiPage>(&top_n));
     println!("{:?}", result.unwrap());
 }
 #[test]
 fn test_data_source_metadata() {
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result =
         tokio_test::block_on(druid_client.datasource_metadata(DataSource::table("wikipedia")));
     println!("{:?}", result.unwrap());
@@ -361,7 +361,7 @@ fn test_segment_metadata() {
         lenient_aggregator_merge: false,
     };
 
-    let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+    let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
     let result = tokio_test::block_on(druid_client.segment_metadata(&segment_query));
     println!("{:?}", result.unwrap());
 }

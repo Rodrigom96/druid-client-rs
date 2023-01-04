@@ -30,9 +30,9 @@
 //! Connect to a druid cluster throughly staticly provided list of brokers:
 //!
 //! ```rust
-//! use druid_io::client::DruidClient;
+//! use druid_io::client::DruidClientBuilder;
 //!
-//! let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+//! let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
 //! ```
 //!
 //! ### Querying
@@ -43,7 +43,7 @@
 //!
 //! ```rust
 //! use chrono::NaiveDate;
-//! use druid_io::client::DruidClient;
+//! use druid_io::client::DruidClientBuilder;
 //! use serde::Deserialize;
 //! use serde::Serialize;
 //! use druid_io::{
@@ -66,7 +66,7 @@
 //!     foo_user: String,
 //! }
 //!
-//! let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+//! let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
 //!
 //! let timeseries = Timeseries {
 //!     data_source: DataSource::table("wikipedia"),

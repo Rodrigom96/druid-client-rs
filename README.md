@@ -32,8 +32,7 @@ druid-io = "*"
 Connect to a druid cluster
 
 ```rust
-
-let druid_client = DruidClient::new("http://localhost:8082", "druid/v2");
+let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
 ```
 
 ### Querying
@@ -108,7 +107,7 @@ let top_n = TopN {
     granularity: Granularity::all(),
     context: Default::default(),
 };
-let druid_client = DruidClient::new(vec!["localhost:8082".to_string()]);
+let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
 let result = tokio_test::block_on(druid_client.top_n::<WikiPage>(&top_n));
 
 ```
