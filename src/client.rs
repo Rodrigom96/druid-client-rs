@@ -11,7 +11,7 @@ use crate::query::{
     time_boundary::TimeBoundary, top_n::TopN, DataSource,
 };
 use crate::query::{DataSourceMetadata, Query};
-use reqwest::Client;
+use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -21,7 +21,9 @@ use thiserror::Error;
 #[non_exhaustive]
 pub enum DruidClientError {
     #[error("http connection error")]
-    HttpConnection { source: reqwest::Error },
+    HttpConnection { source: reqwest_middleware::Error },
+    #[error("http error")]
+    HttpError { source: reqwest::Error },
     #[error("the data for key `{0}` is not available")]
     Redaction(String),
     #[error("invalid header (expected {expected:?}, found {found:?})")]
@@ -39,11 +41,11 @@ type ClientResult<T> = Result<T, DruidClientError>;
 
 pub struct DruidClient {
     url: String,
-    http_client: Client,
+    http_client: ClientWithMiddleware,
 }
 
 impl DruidClient {
-    pub fn new(url: &str, endpoint: &str, client: Client) -> Self {
+    pub fn new(url: &str, endpoint: &str, client: ClientWithMiddleware) -> Self {
         let mut url = url.to_string();
         if !url.ends_with('/') {
             url.push('/');
@@ -67,7 +69,7 @@ impl DruidClient {
             .map_err(|source| DruidClientError::HttpConnection { source })?
             .text()
             .await
-            .map_err(|source| DruidClientError::HttpConnection { source })?;
+            .map_err(|source| DruidClientError::HttpError { source })?;
 
         let json_value = serde_json::from_str::<serde_json::Value>(&response_str)
             .map_err(|err| DruidClientError::ParsingError { source: err });
@@ -166,7 +168,7 @@ impl DruidClient {
 pub struct DruidClientBuilder {
     url: String,
     endpoint: Option<String>,
-    client: Option<Client>,
+    client: Option<ClientWithMiddleware>,
 }
 
 impl DruidClientBuilder {
@@ -178,13 +180,15 @@ impl DruidClientBuilder {
         }
     }
 
-    pub fn client(&mut self, client: Client) {
+    pub fn client(&mut self, client: ClientWithMiddleware) {
         self.client = Some(client);
     }
 
     pub fn build(self) -> DruidClient {
         let endpoint = self.endpoint.unwrap_or("druid/v2".into());
-        let client = self.client.unwrap_or(Client::new());
+        let client = self
+            .client
+            .unwrap_or(ClientBuilder::new(reqwest::Client::new()).build());
 
         DruidClient::new(&self.url, &endpoint, client)
     }
