@@ -21,9 +21,12 @@ use druid_io::{
         DataSource, JoinType,
     },
 };
+use reqwest::Client;
+use reqwest_middleware::ClientBuilder;
 use serde::Deserialize;
 use serde::Serialize;
 use std::collections::HashMap;
+
 #[derive(Serialize, Deserialize, Debug)]
 struct WikiPage {
     page: String,
@@ -362,6 +365,38 @@ fn test_segment_metadata() {
     };
 
     let druid_client = DruidClientBuilder::new("http://localhost:8082").build();
+    let result = tokio_test::block_on(druid_client.segment_metadata(&segment_query));
+    println!("{:?}", result.unwrap());
+}
+
+#[test]
+fn test_client_builder() {
+    let segment_query = SegmentMetadata {
+        data_source: DataSource::table("countries"),
+        intervals: vec![Interval {
+            from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+            to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
+        }],
+        to_include: ToInclude::All,
+        merge: false,
+        analysis_types: vec![
+            AnalysisType::Minmax,
+            AnalysisType::Size,
+            AnalysisType::Interval,
+            AnalysisType::TimestampSpec,
+            AnalysisType::QueryGranularity,
+            AnalysisType::Aggregators,
+            AnalysisType::Rollup,
+            AnalysisType::Cardinality,
+        ],
+        lenient_aggregator_merge: false,
+    };
+
+    let client = ClientBuilder::new(Client::new()).build();
+    let druid_client = DruidClientBuilder::new("http://localhost:8082")
+        .endpoint("druid/v2")
+        .client(client)
+        .build();
     let result = tokio_test::block_on(druid_client.segment_metadata(&segment_query));
     println!("{:?}", result.unwrap());
 }

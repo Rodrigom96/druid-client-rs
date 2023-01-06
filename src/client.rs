@@ -180,8 +180,14 @@ impl DruidClientBuilder {
         }
     }
 
-    pub fn client(&mut self, client: ClientWithMiddleware) {
+    pub fn endpoint(mut self, endpoint: &str) -> Self {
+        self.endpoint = Some(endpoint.to_string());
+        self
+    }
+
+    pub fn client(mut self, client: ClientWithMiddleware) -> Self {
         self.client = Some(client);
+        self
     }
 
     pub fn build(self) -> DruidClient {
