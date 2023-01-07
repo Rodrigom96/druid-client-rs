@@ -180,45 +180,35 @@ struct ScanEvent {
     #[serde(rename(deserialize = "c.languages"))]
     languages: Option<String>,
 }
-let scan = Scan {
-    data_source: DataSource::join(JoinType::Inner)
+
+let scan = ScanBuilder::new(
+    DataSource::join(JoinType::Inner)
         .left(DataSource::table("wikipedia"))
         .right(
             DataSource::query(
-                Scan {
-                    data_source: DataSource::table("countries"),
-                    batch_size: 10,
-                    intervals: vec![Interval{
-                        from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-                        to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
-                    }],
-                    result_format: ResultFormat::List,
-                    columns: vec!["Name".into(), "languages".into()],
-                    limit: None,
-                    filter: None,
-                    ordering: Some(Ordering::None),
-                    context: std::collections::HashMap::new(),
-                }
-                .into(),
+                ScanBuilder::new(DataSource::table("countries"))
+                    .batch_size(10)
+                    .intervals(vec![Interval {
+                        from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+                        to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
+                    }])
+                    .columns(vec!["Name".into(), "languages".into()])
+                    .build()
+                    .into(),
             ),
             "c.",
         )
         .condition("countryName == \"c.Name\"")
         .build()
         .unwrap(),
-    batch_size: 10,
-    intervals: vec![Interval{
-        from: NaiveDate::from_ymd(2015,9,12).and_hms_milli(8, 23, 32, 96),
-        to: NaiveDate::from_ymd(2015,9,12).and_hms_milli(15, 36, 27, 96),
-    }],
-    result_format: ResultFormat::List,
-    columns: vec![],
-    virtual_columns: vec![],
-    limit: Some(10),
-    filter: None,
-    ordering: Some(Ordering::None),
-    context: Default::default(),
-};
+    )
+    .batch_size(10)
+    .intervals(vec![Interval {
+        from: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(8, 23, 32, 96),
+        to: NaiveDate::from_ymd(2015, 9, 12).and_hms_milli(15, 36, 27, 96),
+    }])
+    .limit(10)
+    .build();
 
 let result = tokio_test::block_on(druid_client.scan::<ScanEvent>(&scan));
 
