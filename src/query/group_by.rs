@@ -1,13 +1,13 @@
 use super::definitions::Dimension;
 use super::definitions::Filter;
-use super::definitions::{Granularity, GranularityTyped};
+use super::definitions::Granularity;
 use super::definitions::Interval;
 use super::definitions::VirtualColumn;
 use super::DataSource;
 use crate::query::definitions::Aggregation;
 use crate::query::definitions::Having;
-use crate::query::definitions::PostAggregation;
 use crate::query::definitions::Limit;
+use crate::query::definitions::PostAggregation;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
